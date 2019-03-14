@@ -13,35 +13,7 @@
 		</div>
 	</form>
 
-	<!--<form v-else v-on:submit.prevent="beginSession">
-		<div class="field is-grouped">
-			<div class="control is-expanded">
-				<router-link v-bind:to="{name: 'question-list'}" class="button">
-					問題列表
-				</router-link>
-			</div>
-			<div class="control is-expanded">
-				<router-link v-bind:to="{name: 'result-list'}" class="button">
-					結果列表
-				</router-link>
-			</div>
-		</div>
-
-		<hr>
-
-		<div class="field is-horizontal">
-			<div class="field-label">
-				<label class="label" for="id_group_size">分組題數</label>
-			</div>
-			<div class="field-body">
-				<div class="field">
-					<div class="control is-expanded">
-						<input class="input" type="number" id="id_group_size"
-								v-model="groupSize">
-					</div>
-				</div>
-			</div>
-		</div>
+	<form v-else v-on:submit.prevent="beginSession">
 
 		<div class="field is-horizontal">
 			<div class="field-label">
@@ -65,7 +37,8 @@
 				</button>
 			</div>
 		</div>
-	</form>-->
+
+	</form>
 
 </div>
 
@@ -84,56 +57,28 @@ export default {
 		}
 	},
 	computed: {
-	// 	submitClass() {
-	// 		return {
-	// 			'button': true,
-	// 			'is-primary': true,
-	// 			'is-large': true,
-	// 			'is-loading': this.loading,
-	// 		}
-	// 	},
+		submitClass() {
+			return {
+				'button': true,
+				'is-primary': true,
+				'is-large': true,
+				'is-loading': this.loading,
+			}
+		},
 		hasProject() {
-			return false
 			return this.$store.getters.projectLoaded
 		},
-	// 	groupSize: {
-	// 		get() {
-	// 			return this.$store.state.project.groupSize
-	// 		},
-	// 		set(val) {
-	// 			this.loading = true
-	// 			const meta = {groupSize: Number(val)}
-	// 			this.$store.dispatch('PROJECT_SET_PROJECT_META', meta).then(() => {
-	// 				this.loading = false
-	// 			})
-	// 		},
-	// 	},
-	// },
-	// watch: {
-	// 	hasProject(newVal) {
-	// 		if (!newVal) {
-	// 			this.chooseProjectDirectory()
-	// 		}
-	// 	},
 	},
 	methods: {
 		chooseProjectDirectory() {
-			const projectData = ipcRenderer.sendSync('select-project-directory')
+			const projectData = ipcRenderer.sendSync('select-project')
 			if (projectData) {
 				this.$store.dispatch('PROJECT_LOAD_FROM_FILESYSTEM', projectData)
 			}
 		},
-	// 	beginSession() {
-	// 		this.loading = true
-	// 		const data = {subjectName: this.subjectName}
-	// 		this.$store.dispatch('SESSION_POPULATE', data).then(() => {
-	// 			this.loading = false
-	// 			this.$router.push({
-	// 				name: 'image',
-	// 				params: {groupIndex: 0, questionIndex: 0},
-	// 			})
-	// 		})
-	// 	},
+		beginSession() {
+			console.log(this.$store.state.project.questions)
+		},
 	},
 	created() {
 		if (!this.hasProject) {
