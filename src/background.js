@@ -1,10 +1,13 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import {app, ipcMain, protocol, BrowserWindow} from 'electron'
 import {
   createProtocol,
   installVueDevtools
 } from 'vue-cli-plugin-electron-builder/lib'
+
+import {selectProjectDirectory} from './background/projects'
+
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -78,3 +81,11 @@ if (isDevelopment) {
     })
   }
 }
+
+
+// Register IPC handlers.
+
+ipcMain.on('select-project-directory', event => {
+	const project = selectProjectDirectory(win)
+	event.returnValue = project
+})
