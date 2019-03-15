@@ -1,10 +1,25 @@
-const state = {}
+const state = {
+	subjectName: '',
+	questions: [],
+}
 
 const getters = {}
 
-const mutations = {}
+const mutations = {
+	SESSION_POPULATE(state, {subjectName, questions}) {
+		state.subjectName = subjectName
+		state.questions = questions
+	}
+}
 
-const actions = {}
+const actions = {
+	SESSION_POPULATE({commit}, data) {
+		return new Promise((resolve, reject) => {
+			commit('SESSION_POPULATE', data)
+			resolve()
+		})
+	}
+}
 
 export default {
 	state: state,

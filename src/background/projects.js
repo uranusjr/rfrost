@@ -7,9 +7,7 @@ import {dialog} from 'electron'
 
 let projectRootServer = null
 
-function getProjectRoot(p) {
-	const rootDir = path.dirname(p)
-
+function getProjectRoot(rootDir) {
 	// Simply use the file protocol in production mode.
 	if (process.env.NODE_ENV === 'production') {
 		return `file://${rootDir}`

@@ -48,6 +48,7 @@
 <script>
 
 import {ipcRenderer} from 'electron'
+import _ from 'lodash'
 
 export default {
 	data() {
@@ -77,7 +78,18 @@ export default {
 			}
 		},
 		beginSession() {
-			console.log(this.$store.state.project.questions)
+			this.loading = true
+			const data = {
+				subjectName: this.subjectName,
+				questions: _.shuffle(this.$store.state.project.questions),
+			}
+			this.$store.dispatch('SESSION_POPULATE', data).then(() => {
+				this.loading = false
+				this.$router.push({
+					name: 'question',
+					params: {questionIndex: 0},
+				})
+			})
 		},
 	},
 	created() {
