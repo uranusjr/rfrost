@@ -4,3 +4,16 @@ export class Question {
 		this.audio = opts.audio
 	}
 }
+
+export class Answer {
+	constructor(opts) {
+		this.question = opts.question
+		this.score = opts.score
+		this.msDiffs = opts.msDiffs
+	}
+}
+
+export default {
+	Question,
+	Answer,
+}

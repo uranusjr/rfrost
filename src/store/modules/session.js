@@ -1,6 +1,9 @@
+import {Answer} from '@/models'
+
 const state = {
 	subjectName: '',
 	questions: [],
+	answers: [],
 }
 
 const getters = {}
@@ -9,7 +12,11 @@ const mutations = {
 	SESSION_POPULATE(state, {subjectName, questions}) {
 		state.subjectName = subjectName
 		state.questions = questions
-	}
+		state.answers = []
+	},
+	SESSION_SET_ANSWER(state, {question, score, msDiffs}) {
+		state.answers.push(new Answer({question, score, msDiffs}))
+	},
 }
 
 const actions = {
@@ -18,7 +25,10 @@ const actions = {
 			commit('SESSION_POPULATE', data)
 			resolve()
 		})
-	}
+	},
+	SESSION_SET_ANSWER({commit}, data) {
+		commit('SESSION_SET_ANSWER', data)
+	},
 }
 
 export default {

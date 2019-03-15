@@ -16,9 +16,18 @@
 
 	<div class="content" v-if="beginTimes.length !== 0">
 		<h2 class="subtitle">{{ question.text }}</h2>
-		<form>
-			<button type="submit" name="value" value="1">
-
+		<form v-on:submit.prevent="submit">
+			<button type="submit" v-on:click="score = 3">
+				完全可能
+			</button>
+			<button type="submit" v-on:click="score = 2">
+				有些可能
+			</button>
+			<button type="submit" v-on:click="score = 1">
+				有些不可能
+			</button>
+			<button type="submit" v-on:click="score = 0">
+				完全不可能
 			</button>
 		</form>
 	</div>
@@ -40,6 +49,7 @@ export default {
 			audio: this.createAudio(this.question),
 			playing: false,
 			beginTimes: [],
+			score: -1,
 		}
 	},
 	computed: {
@@ -85,12 +95,15 @@ export default {
 				return
 			}
 			this.beginTimes.push(DateTime.local())
-			this.audio.play()
+			this.audio.play().catch(() => {})
 		},
-		choose(value) {
+		submit() {
+			if (this.score > 3 || this.score < 0) {
+				return
+			}
 			this.$store.dispatch('SESSION_SET_ANSWER', {
-				questionIndex: this.questionIndex,
-				value: value,
+				question: this.question,
+				score: this.score,
 				msDiffs: _.map(this.beginTimes, t => -t.diffNow().valueOf()),
 			})
 			this.$router.push(this.next)
@@ -135,7 +148,33 @@ export default {
 	margin-top: 4px;
 
 	.subtitle {
+		margin-top: 3rem;
 		text-align: center;
+		font-size: 240%;
+	}
+
+	form {
+		display: flex;
+		justify-content: center;
+		margin-top: 4rem;
+
+		button[type="submit"] {
+			flex: 0 12rem;
+			font-size: 24px;
+			margin: auto 1.5rem;
+			padding: 0.5rem;
+			border: 1px solid $grey-light;
+			border-radius: 0.75rem;
+
+			&:focus {
+				outline: none;
+			}
+
+			&:hover {
+        cursor: pointer;
+        background: $grey-lighter;
+      }
+		}
 	}
 }
 
