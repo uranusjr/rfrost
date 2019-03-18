@@ -3,9 +3,7 @@
 <div class="page-content">
 
 	<h1 class="title">
-		<span>
-			第 {{ questionIndex + 1 }} 題：{{ helpText }}
-		</span>
+		<span>{{ helpText }}</span>
 		<span v-bind:class="['icon', playing ? 'is-small' : '']"
 				v-bind:disabled="playing" v-on:click="play()">
 			<span v-bind:class="playIconClasses"></span>
@@ -43,10 +41,10 @@ import _ from 'lodash'
 import {DateTime} from 'luxon'
 
 export default {
-	props: ['groupIndex', 'questionIndex', 'question', 'next'],
+	props: ['question'],
 	data() {
+		this.watchAudio()
 		return {
-			audio: this.createAudio(this.question),
 			playing: false,
 			beginTimes: [],
 			score: -1,
@@ -71,46 +69,40 @@ export default {
 	},
 	watch: {
 		question() {
-			this.audio.pause()
-			this.audio = this.createAudio(this.question)
-		},
-		audio() {
 			this.beginTimes = []
 			this.playing = false
+			if (this.question.audio) {
+				this.watchAudio()
+			}
 		},
 	},
 	methods: {
-		createAudio(q) {
-			const audio = new Audio(q.audio)
-			audio.addEventListener('play', () => {
+		watchAudio() {
+			this.question.audio.addEventListener('play', () => {
 				this.playing = true
 			})
-			audio.addEventListener('pause', () => {
+			this.question.audio.addEventListener('pause', () => {
 				this.playing = false
 			})
-			return audio
 		},
 		play() {
 			if (this.playing) {
 				return
 			}
 			this.beginTimes.push(DateTime.local())
-			this.audio.play().catch(() => {})
+			this.question.audio.play().catch(() => {})
 		},
 		submit() {
-			if (this.score > 3 || this.score < 0) {
-				return
-			}
 			this.$store.dispatch('SESSION_SET_ANSWER', {
 				question: this.question,
 				score: this.score,
 				msDiffs: _.map(this.beginTimes, t => -t.diffNow().valueOf()),
 			})
-			this.$router.push(this.next)
+			this.$router.push({name: 'session-next-page'})
 		},
 	},
 	beforeRouteLeave(to, from, next) {
-		this.audio.pause()
+		this.question.audio.pause()
 		next()
 	},
 }

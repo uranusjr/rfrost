@@ -1,7 +1,8 @@
 export class Question {
 	constructor(opts) {
 		this.text = opts.text
-		this.audio = opts.audio
+		this.audio = new Audio(opts.audio)
+		this.audioUrl = opts.audio
 	}
 }
 

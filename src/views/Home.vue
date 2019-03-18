@@ -85,10 +85,7 @@ export default {
 			}
 			this.$store.dispatch('SESSION_POPULATE', data).then(() => {
 				this.loading = false
-				this.$router.push({
-					name: 'question',
-					params: {questionIndex: 0},
-				})
+				this.$router.push({name: 'session-next-page'})
 			})
 		},
 	},
