@@ -14,8 +14,8 @@ const mutations = {
 		state.questions = questions
 		state.answers = []
 	},
-	SESSION_SET_ANSWER(state, {question, score, diffs}) {
-		state.answers.push(new Answer({question, score, diffs}))
+	SESSION_SET_ANSWER(state, {question, score, diff}) {
+		state.answers.push(new Answer({question, score, diff}))
 	},
 }
 

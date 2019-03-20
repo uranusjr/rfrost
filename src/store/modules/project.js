@@ -26,7 +26,11 @@ const mutations = {
 		const result = {
 			subject: data.result.subject,
 			answers: _.map(data.result.answers, (a) => {
-				return {question: a.question.text, score: a.score}
+				return {
+					question: a.question.text,
+					score: a.score,
+					time: a.diff.valueOf() / 1000.0,
+				}
 			})
 		}
 		ipcRenderer.once('save-result-done', cb)

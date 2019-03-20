@@ -73,41 +73,43 @@ export function selectProject(browserWindow) {
 	return project
 }
 
+function saveValues(sheet, subject, answers, key) {
+	// Build a mapping of existing question text and the row it's on.
+	const questionRows = {}
+	for (let r = 1; ; r++) {	// Skip the title row.
+		const cell = sheet.getCell({r, c: 0})
+		if (!cell) {
+			break
+		}
+		questionRows[cell.v] = r
+	}
+
+	const addr = sheet.getNextAddress()
+	const c = addr.c === 0 ? 1 : addr.c
+	let nextRow = addr.r === 0 ? 1 : addr.r
+
+	// Subject name.
+	sheet.setCell({c, r: 0}, subject)
+
+	// Insert values.
+	for (const answer of answers) {
+		const text = answer.question
+
+		// Get the row this question is on, append one if it does not exist.
+		let r = questionRows[text]
+		if (r === undefined) {
+			r = nextRow
+			nextRow += 1
+			sheet.setCell({c: 0, r}, text)
+		}
+		sheet.setCell({c, r}, answer[key])
+	}
+}
+
 export function saveResult(source, {subject, answers}) {
 	return workbook(source).then(workbook => {
-		const sheet = workbook.getSheet('回答結果')
-
-		// Build a mapping of existing question text and the row it's on.
-		const questionRows = {}
-		for (let r = 1; ; r++) {	// Skip the title row.
-			const cell = sheet.getCell({r, c: 0})
-			if (!cell) {
-				break
-			}
-			questionRows[cell.v] = r
-		}
-
-		const addr = sheet.getNextAddress()
-		const c = addr.c === 0 ? 1 : addr.c
-		let nextRow = addr.r === 0 ? 1 : addr.r
-
-		// Subject name.
-		sheet.setCell({c, r: 0}, subject)
-
-		// Answers.
-		for (const answer of answers) {
-			const text = answer.question
-
-			// Get the row this question is on, append one if it does not exist.
-			let r = questionRows[text]
-			if (r === undefined) {
-				r = nextRow
-				nextRow += 1
-				sheet.setCell({c: 0, r}, text)
-			}
-			sheet.setCell({c, r}, answer.score)
-		}
-
+		saveValues(workbook.getSheet('回答結果'), subject, answers, 'score')
+		saveValues(workbook.getSheet('使用時間'), subject, answers, 'time')
 		return workbook.save()
 	})
 }
