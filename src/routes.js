@@ -45,6 +45,7 @@ export default new Router({
 		{
 			path: '*',
 			redirect: {name: 'home'},
+			// redirect: {name: 'session-next-page'},
 		},
 	],
 })

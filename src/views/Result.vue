@@ -27,7 +27,6 @@
 
 export default {
 	data() {
-		console.log(this.$store.state.session.answers)
 		return {
 			saving: false,
 		}
@@ -45,13 +44,20 @@ export default {
 	methods: {
 		saveResult() {
 			this.saving = true
-			this.$store.dispatch('PROJECT_SAVE_RESULT', this.result).then(() => {
-				this.saving = false
-				this.$router.push({name: 'home'})
-			}).catch(e => {
-				console.error(e)
-				this.saving = false
-			})
+			const result = {
+				subject: this.$store.state.session.subjectName,
+				answers: this.$store.state.session.answers,
+			}
+			this.$store.dispatch('PROJECT_SAVE_RESULT', {result}).then(
+				() => {
+					this.saving = false
+					this.$router.push({name: 'home'})
+				},
+				(err) => {
+					// TODO: Show results here to manually record :(
+					this.saving = false
+				},
+			)
 		},
 	},
 }

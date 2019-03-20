@@ -3,7 +3,18 @@ import {Answer} from '@/models'
 const state = {
 	subjectName: '',
 	questions: [],
-	answers: [],
+	answers: [
+		new Answer({
+			question: {text: '中國餐廳的菜比日本餐廳的菜好吃'},
+			score: 1,
+			msDiffs: [],
+		}),
+		new Answer({
+			question: {text: '今天妹妹被動物園的獅子嚇得大哭'},
+			score: 1,
+			msDiffs: [],
+		}),
+	],
 }
 
 const getters = {}

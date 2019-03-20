@@ -1,12 +1,12 @@
 'use strict'
 
-import {app, ipcMain, protocol, BrowserWindow} from 'electron'
+import {app, dialog, ipcMain, protocol, BrowserWindow} from 'electron'
 import {
 	createProtocol,
 	installVueDevtools
 } from 'vue-cli-plugin-electron-builder/lib'
 
-import {selectProject} from './background/projects'
+import {saveResult, selectProject} from './background/projects'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -86,6 +86,33 @@ if (isDevelopment) {
 // Register IPC handlers.
 
 ipcMain.on('select-project', event => {
-	const project = selectProject(win)
+	let project = null
+	try {
+		project = selectProject(win)
+	} catch (e) {
+		console.error(e.stack)
+		dialog.showMessageBox(win, {
+			type: 'error',
+			title: '專案載入失敗',
+			message: e.toString(),
+			detail: `專案路徑：${e.selectedPath}`,
+		})
+	}
 	event.returnValue = project
+})
+
+ipcMain.on('save-result', (event, {result, source}) => {
+	saveResult(source, result).then(
+		() => { event.sender.send('save-result-done', null) },
+		(e) => {
+			console.error(e.stack)
+			dialog.showMessageBox(win, {
+				type: 'error',
+				title: '無法儲存專案',
+				message: e.toString(),
+				detail: `專案路徑：${source}`,
+			})
+			event.sender.send('save-result-done', e)
+		},
+	)
 })

@@ -1,8 +1,9 @@
-import fs from 'fs'
 import path from 'path'
 import process from 'process'
 
 import {dialog} from 'electron'
+
+import {workbook, workbookSync} from './xlsx'
 
 
 let projectRootServer = null
@@ -26,48 +27,87 @@ function getProjectRoot(rootDir) {
 	return 'http://localhost:8888'
 }
 
-function createProject(p) {
-	const project = {
-		source: p,
-		root: getProjectRoot(p),
-		questions: [],
-	}
-	for (const filename of fs.readdirSync(p)) {
-		if (path.extname(filename).toLowerCase() !== '.m4a') {
+function createProject(source) {
+
+	const rootUrl = getProjectRoot(path.dirname(source))
+	const ws = workbookSync(source).getSheet('問題列表')
+
+	const questions = []
+	for (let r = 0; ; r++) {
+		const tCell = ws.getCell({r, c: 0})
+		const fCell = ws.getCell({r, c: 1})
+		if (!tCell && !fCell) {
+			break
+		} else if (!tCell || !fCell) {
 			continue
 		}
-		project.questions.push({
-			text: path.basename(filename, '.m4a'),
-			audio: `${project.root}/${filename}`,
-		})
+		const file = fCell.v
+		if (path.extname(file).toLowerCase() !== '.m4a') {
+			continue
+		}
+		questions.push({text: tCell.v, audio: `${rootUrl}/${file}`})
 	}
-	return project
+
+	return {source, questions}
 }
 
 export function selectProject(browserWindow) {
 	const selection = dialog.showOpenDialog(browserWindow, {
-		properties: ['openDirectory'],
+		filters: [{name: 'Microsoft Excel XML document', extensions: ['xlsx']}],
+		properties: ['openFile'],
 	})
 	if (!selection || selection.length < 1) {
 		return null
 	}
 
 	const p = selection[0]
-
-	let project
+	let project = null
 	try {
 		project = createProject(p)
 		if (project.questions.length < 1) {
 			throw new Error('找不到問題')
 		}
 	} catch (e) {
-		dialog.showMessageBox(browserWindow, {
-			type: 'error',
-			title: '專案載入失敗',
-			message: e.toString(),
-			detail: `專案路徑：${p}`,
-		})
+		e.selectedPath = p
 	}
-
 	return project
+}
+
+export function saveResult(source, {subject, answers}) {
+	return workbook(source).then(workbook => {
+		const sheet = workbook.getSheet('回答結果')
+
+		// Build a mapping of existing question text and the row it's on.
+		const questionRows = {}
+		for (let r = 1; ; r++) {	// Skip the title row.
+			const cell = sheet.getCell({r, c: 0})
+			if (!cell) {
+				break
+			}
+			questionRows[cell.v] = r
+		}
+
+		const addr = sheet.getNextAddress()
+		const c = addr.c === 0 ? 1 : addr.c
+		let nextRow = addr.r === 0 ? 1 : addr.r
+
+		// Subject name.
+		sheet.setCell({c, r: 0}, subject)
+
+		// Answers.
+		for (const answer of answers) {
+			const text = answer.question
+
+			// Get the row this question is on, append one if it does not exist.
+			let r = questionRows[text]
+			if (r === undefined) {
+				r = nextRow
+				nextRow += 1
+				sheet.setCell({c: 0, r}, text)
+			}
+			sheet.setCell({c, r}, answer.score)
+		}
+
+		return workbook.save()
+	})
 }

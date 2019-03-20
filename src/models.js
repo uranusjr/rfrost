@@ -2,7 +2,6 @@ export class Question {
 	constructor(opts) {
 		this.text = opts.text
 		this.audio = new Audio(opts.audio)
-		this.audioUrl = opts.audio
 	}
 }
 
