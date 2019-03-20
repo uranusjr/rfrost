@@ -3,18 +3,7 @@ import {Answer} from '@/models'
 const state = {
 	subjectName: '',
 	questions: [],
-	answers: [
-		new Answer({
-			question: {text: '中國餐廳的菜比日本餐廳的菜好吃'},
-			score: 1,
-			msDiffs: [],
-		}),
-		new Answer({
-			question: {text: '今天妹妹被動物園的獅子嚇得大哭'},
-			score: 1,
-			msDiffs: [],
-		}),
-	],
+	answers: [],
 }
 
 const getters = {}
@@ -25,8 +14,8 @@ const mutations = {
 		state.questions = questions
 		state.answers = []
 	},
-	SESSION_SET_ANSWER(state, {question, score, msDiffs}) {
-		state.answers.push(new Answer({question, score, msDiffs}))
+	SESSION_SET_ANSWER(state, {question, score, diffs}) {
+		state.answers.push(new Answer({question, score, diffs}))
 	},
 }
 

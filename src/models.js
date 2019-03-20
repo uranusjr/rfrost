@@ -9,7 +9,7 @@ export class Answer {
 	constructor(opts) {
 		this.question = opts.question
 		this.score = opts.score
-		this.msDiffs = opts.msDiffs
+		this.diffs = opts.diffs
 	}
 }
 

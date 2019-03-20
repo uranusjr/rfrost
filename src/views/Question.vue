@@ -2,32 +2,25 @@
 
 <div class="page-content">
 
-	<h1 class="title">
-		<span>{{ helpText }}</span>
-		<span v-bind:class="['icon', playing ? 'is-small' : '']"
-				v-bind:disabled="playing" v-on:click="play()">
-			<span v-bind:class="playIconClasses"></span>
-		</span>
-	</h1>
+	<h1 class="title">{{ helpText }}</h1>
 
 	<hr>
 
-	<div class="content" v-if="beginTimes.length !== 0">
-		<h2 class="subtitle">{{ question.text }}</h2>
-		<form v-on:submit.prevent="submit">
-			<button type="submit" v-on:click="score = 3">
-				完全可能
-			</button>
-			<button type="submit" v-on:click="score = 2">
-				有些可能
-			</button>
-			<button type="submit" v-on:click="score = 1">
-				有些不可能
-			</button>
-			<button type="submit" v-on:click="score = 0">
-				完全不可能
-			</button>
+	<div class="content">
+
+		<div class="icon" v-if="!beginTimes.length" v-on:click="play()">
+			<span class="fa fa-5x fa-play-circle"></span>
+		</div>
+
+		<h2 class="subtitle">{{ playing ? question.text : '' }}</h2>
+
+		<form v-if="beginTimes.length" v-on:submit.prevent="submit">
+			<button type="submit" v-on:click="score = 3">完全可能</button>
+			<button type="submit" v-on:click="score = 2">有些可能</button>
+			<button type="submit" v-on:click="score = 1">有些不可能</button>
+			<button type="submit" v-on:click="score = 0">完全不可能</button>
 		</form>
+
 	</div>
 
 </div>
@@ -37,7 +30,6 @@
 
 <script>
 
-import _ from 'lodash'
 import {DateTime} from 'luxon'
 
 export default {
@@ -45,21 +37,12 @@ export default {
 	data() {
 		this.watchAudio()
 		return {
-			playing: false,
 			beginTimes: [],
+			playing: false,
 			score: -1,
 		}
 	},
 	computed: {
-		playIconClasses() {
-			const cls = ['fa']
-			if (this.playing) {
-				cls.push('fa-circle-o-notch', 'fa-spin')
-			} else {
-				cls.push('fa-play-circle')
-			}
-			return cls
-		},
 		helpText() {
 			if (this.beginTimes.length) {
 				return '選擇對題目敘述的感受'
@@ -90,13 +73,17 @@ export default {
 				return
 			}
 			this.beginTimes.push(DateTime.local())
+			this.question.audio.currentTime = 0
 			this.question.audio.play().catch(() => {})
 		},
 		submit() {
+			if (!this.beginTimes.length) {
+				return
+			}
 			this.$store.dispatch('SESSION_SET_ANSWER', {
 				question: this.question,
 				score: this.score,
-				msDiffs: _.map(this.beginTimes, t => -t.diffNow().valueOf()),
+				diff: -this.beginTimes[0].diffNow(),
 			})
 			this.$router.push({name: 'session-next-page'})
 		},
@@ -115,31 +102,24 @@ export default {
 @import '~@/styles/variables';
 
 .title {
-	> *:not(:last-child) {
-		margin-right: 1rem;
-	}
-	.icon {
-		font-size: 90%;
-		cursor: pointer;
+	text-align: center;
+}
+.icon {
+	display: block;
+	width: 100%;
+	font-size: 200%;
+	cursor: pointer;
+	text-align: center;
 
-		&:hover {
-			opacity: 0.75;
-		}
-		&.is-small {
-			font-size: 70%;
-			padding-left: 8px;
-			vertical-align: 2px;
-		}
-		&[disabled], &[disabled]:hover {
-			cursor: wait;
-			opacity: 0.5;
-		}
+	&:hover {
+		opacity: 0.75;
 	}
 }
 .content {
 	margin-top: 4px;
 
 	.subtitle {
+		height: 2rem;
 		margin-top: 3rem;
 		text-align: center;
 		font-size: 240%;
@@ -163,9 +143,9 @@ export default {
 			}
 
 			&:hover {
-        cursor: pointer;
-        background: $grey-lighter;
-      }
+				cursor: pointer;
+				background: $grey-lighter;
+			}
 		}
 	}
 }
