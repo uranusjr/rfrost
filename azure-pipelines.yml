@@ -10,6 +10,7 @@ steps:
   - script: yarn run electron:build
     displayName: Build app
   - task: PublishBuildArtifacts@1
+    displayName: Publish artifacts
     inputs:
       pathtoPublish: $(Build.ArtifactStagingDirectory)/dist_electron
       artifactName: drop
