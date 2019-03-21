@@ -13,5 +13,5 @@ steps:
     displayName: Publish artifacts
     inputs:
       pathtoPublish: $(Build.SourcesDirectory)/dist_electron
-      artifactName: drop
+      artifactName: artifacts-$(Build.BuildId)
       publishLocation: Container
