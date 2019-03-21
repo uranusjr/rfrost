@@ -1,15 +1,11 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
-- master
+  - master
 
 pool:
   vmImage: 'windows-2019'
 
 steps:
-  - task: 'NodeTool@0'
-    inputs:
-      versionSpec: '11.x'
+  - displayName: Install dependencies
+    script: yarn install
+  - displayName: Build app
+    script: yarn run electron:build
