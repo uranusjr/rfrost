@@ -17,7 +17,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr v-for="answer in erroredAnswers">
+				<tr v-for="answer in erroredAnswers" v-bind:key="answer.question.text">
 					<th>{{ answer.question.text }}</th>
 					<td>{{ answer.score }}</td>
 					<td>{{ (answer.diff.valueOf() / 1000.0).toFixed(3) }} 秒</td>
