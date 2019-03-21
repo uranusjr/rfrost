@@ -5,7 +5,12 @@ pool:
   vmImage: 'windows-2019'
 
 steps:
-  - displayName: Install dependencies
-    script: yarn install
-  - displayName: Build app
-    script: yarn run electron:build
+  - script: yarn install
+    displayName: Install dependencies
+  - script: yarn run electron:build
+    displayName: Build app
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: $(Build.ArtifactStagingDirectory)/dist_electron
+      artifactName: drop
+      publishLocation: Container
