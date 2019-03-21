@@ -12,6 +12,6 @@ steps:
   - task: PublishBuildArtifacts@1
     displayName: Publish artifacts
     inputs:
-      pathtoPublish: $(Build.ArtifactStagingDirectory)/dist_electron
+      pathtoPublish: $(Build.SourcesDirectory)/dist_electron
       artifactName: drop
       publishLocation: Container
