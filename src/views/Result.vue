@@ -4,7 +4,7 @@
 
 	<h1 class="title">結果</h1>
 
-	<div v-if="erroredAnswers">
+	<div v-if="erroredAnswers.length">
 
 		<p class="field">答題結果儲存失敗！請手動紀錄以下結果。</p>
 
@@ -84,8 +84,8 @@ export default {
 					this.saving = false
 					this.$router.push({name: 'home'})
 				},
-				(err) => {
-					this.erroredAnswers = result.answers,
+				err => {
+					this.erroredAnswers = result.answers
 					this.saving = false
 				},
 			)
@@ -93,6 +93,7 @@ export default {
 	},
 	beforeRouteLeave(to, from, next) {
 		this.erroredAnswers = []
+		next()
 	},
 }
 
@@ -100,7 +101,7 @@ export default {
 
 <style lang="scss" scoped>
 .table {
-	margin: auto;
+	margin: 2rem auto;
 
 	th, td {
 		padding: 0.75rem 2rem;

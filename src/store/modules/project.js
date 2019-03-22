@@ -33,7 +33,7 @@ const mutations = {
 				}
 			})
 		}
-		ipcRenderer.once('save-result-done', cb)
+		ipcRenderer.once('save-result-done', (evt, err) => { cb(err) })
 		ipcRenderer.send('save-result', {result: result, source: state.source})
 	},
 }
@@ -44,11 +44,11 @@ const actions = {
 	},
 	PROJECT_SAVE_RESULT({commit}, data) {
 		return new Promise((resolve, reject) => {
-			const cb = (result) => {
-				if (result) {
-					resolve(result)
+			const cb = e => {
+				if (e) {
+					reject(e)
 				} else {
-					reject()
+					resolve()
 				}
 			}
 			commit('PROJECT_SAVE_RESULT', {data, cb})

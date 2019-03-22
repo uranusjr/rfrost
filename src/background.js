@@ -103,7 +103,9 @@ ipcMain.on('select-project', event => {
 
 ipcMain.on('save-result', (event, {result, source}) => {
 	saveResult(source, result).then(
-		() => { event.sender.send('save-result-done', null) },
+		() => {
+			event.sender.send('save-result-done', null)
+		},
 		(e) => {
 			console.error(e.stack)
 			dialog.showMessageBox(win, {
