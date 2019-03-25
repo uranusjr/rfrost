@@ -133,7 +133,7 @@ export default {
 		button[type="submit"] {
 			flex: 0 12rem;
 			font-size: 24px;
-			margin: auto 1.5rem;
+			margin: auto 1rem;
 			padding: 0.5rem;
 			border: 1px solid $grey-light;
 			border-radius: 0.75rem;
