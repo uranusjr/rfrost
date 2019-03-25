@@ -1,5 +1,7 @@
 # rfrost
 
+[![Build Status](https://dev.azure.com/tpchung/rfrost/_apis/build/status/uranusjr.rfrost?branchName=master)](https://dev.azure.com/tpchung/rfrost/_build/latest?definitionId=2&branchName=master)
+
 ## Project setup
 ```
 yarn install
