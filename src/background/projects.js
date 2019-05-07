@@ -1,3 +1,4 @@
+import fs from 'fs'
 import path from 'path'
 import process from 'process'
 
@@ -27,9 +28,11 @@ function getProjectRoot(rootDir) {
 	return 'http://localhost:8888'
 }
 
-function createProject(source) {
+const AUDIO_EXTENSION = '.m4a'
 
-	const rootUrl = getProjectRoot(path.dirname(source))
+function createProject(source) {
+	const rootDir = path.dirname(source)
+	const rootUrl = getProjectRoot(rootDir)
 	const ws = workbookSync(source).getSheet('問題列表')
 
 	const questions = []
@@ -41,10 +44,16 @@ function createProject(source) {
 		} else if (!tCell || !fCell) {
 			continue
 		}
-		const file = fCell.v
-		if (path.extname(file).toLowerCase() !== '.m4a') {
-			continue
+		let file = fCell.v.toString()
+
+		// If extension does not match, try to derive it from filesystem state.
+		if (path.extname(file).toLowerCase() !== AUDIO_EXTENSION) {
+			file = `${file}${AUDIO_EXTENSION}`
+			if (!fs.existsSync(path.join(rootDir, file))) {
+				continue
+			}
 		}
+
 		questions.push({text: tCell.v, audio: `${rootUrl}/${file}`})
 	}
 
