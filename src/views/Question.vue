@@ -14,7 +14,7 @@
 
 		<h2 class="subtitle">{{ playing ? question.text : '' }}</h2>
 
-		<form v-if="beginTimes.length" v-on:submit.prevent="submit">
+		<form v-if="beginTimes.length && !playing" v-on:submit.prevent="submit">
 			<button type="submit" v-on:click="score = 0">👎👎</button>
 			<button type="submit" v-on:click="score = 1">&nbsp;👎&nbsp;</button>
 			<button type="submit" v-on:click="score = 2">&nbsp;👍&nbsp;</button>
@@ -65,7 +65,7 @@ export default {
 				this.playing = true
 			})
 			this.question.audio.addEventListener('pause', () => {
-				this.playing = false
+				setTimeout(() => { this.playing = false }, 250)
 			})
 		},
 		play() {
