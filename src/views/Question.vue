@@ -14,7 +14,7 @@
 
 		<h2 class="subtitle">{{ playing ? question.text : '' }}</h2>
 
-		<form v-if="beginTimes.length && !playing" v-on:submit.prevent="submit">
+		<form v-if="!playing && beginTimes.length" v-on:submit.prevent="submit">
 			<button type="submit" v-on:click="score = 0">👎👎</button>
 			<button type="submit" v-on:click="score = 1">&nbsp;👎&nbsp;</button>
 			<button type="submit" v-on:click="score = 2">&nbsp;👍&nbsp;</button>
@@ -65,7 +65,10 @@ export default {
 				this.playing = true
 			})
 			this.question.audio.addEventListener('pause', () => {
-				setTimeout(() => { this.playing = false }, 250)
+				setTimeout(() => {
+					this.beginTimes.push(DateTime.local())
+					this.playing = false
+				}, 250)
 			})
 		},
 		play() {
@@ -77,13 +80,14 @@ export default {
 			this.question.audio.play().catch(() => {})
 		},
 		submit() {
-			if (!this.beginTimes.length) {
+			const index = this.beginTimes.length - 1
+			if (index < 0) {
 				return
 			}
 			this.$store.dispatch('SESSION_SET_ANSWER', {
 				question: this.question,
 				score: this.score,
-				diff: -this.beginTimes[0].diffNow(),
+				diff: -this.beginTimes[index].diffNow(),
 			})
 			this.$router.push({name: 'session-next-page'})
 		},
