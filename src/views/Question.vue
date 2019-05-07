@@ -15,10 +15,10 @@
 		<h2 class="subtitle">{{ playing ? question.text : '' }}</h2>
 
 		<form v-if="beginTimes.length" v-on:submit.prevent="submit">
-			<button type="submit" v-on:click="score = 3">完全可能</button>
-			<button type="submit" v-on:click="score = 2">有些可能</button>
-			<button type="submit" v-on:click="score = 1">有些不可能</button>
-			<button type="submit" v-on:click="score = 0">完全不可能</button>
+			<button type="submit" v-on:click="score = 0">👎👎</button>
+			<button type="submit" v-on:click="score = 1">&nbsp;👎&nbsp;</button>
+			<button type="submit" v-on:click="score = 2">&nbsp;👍&nbsp;</button>
+			<button type="submit" v-on:click="score = 3">👍👍</button>
 		</form>
 
 	</div>
@@ -137,6 +137,7 @@ export default {
 			padding: 0.5rem;
 			border: 1px solid $grey-light;
 			border-radius: 0.75rem;
+			background: $white;
 
 			&:focus {
 				outline: none;
