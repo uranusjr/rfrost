@@ -81,7 +81,7 @@ export default {
 		},
 		setScore(index) {
 			if (this.question.order < 0) {
-				this.score = 4 - index
+				this.score = 3 - index
 			} else {
 				this.score = index
 			}
