@@ -30,11 +30,8 @@ function getProjectRoot(rootDir) {
 
 const AUDIO_EXTENSION = '.m4a'
 
-function createProject(source) {
-	const rootDir = path.dirname(source)
-	const rootUrl = getProjectRoot(rootDir)
-	const ws = workbookSync(source).getSheet('問題列表')
-
+function collectQuestions(rootDir, rootUrl, wb, sheetName) {
+	const ws = wb.getSheet(sheetName)
 	const questions = []
 	for (let r = 0; ; r++) {
 		const tCell = ws.getCell({r, c: 0})
@@ -53,7 +50,6 @@ function createProject(source) {
 				continue
 			}
 		}
-
 		const oCell = ws.getCell({r, c: 2})
 		const order = oCell ? Number(oCell.v) : 1
 
@@ -63,8 +59,18 @@ function createProject(source) {
 			order: order < 0 ? -1 : 1,
 		})
 	}
+	return questions
+}
 
-	return {source, questions}
+function createProject(source) {
+	const rootDir = path.dirname(source)
+	const rootUrl = getProjectRoot(rootDir)
+	const wb = workbookSync(source)
+
+	const examples = collectQuestions(rootDir, rootUrl, wb, '範例問題')
+	const questions = collectQuestions(rootDir, rootUrl, wb, '問題列表')
+
+	return {source, questions, examples}
 }
 
 export function selectProject(browserWindow) {

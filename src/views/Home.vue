@@ -2,42 +2,18 @@
 
 <div class="index-page">
 
-	<form v-if="!hasProject">
+	<form v-on:submit.prevent="beginExamples">
 		<div class="field is-grouped">
 			<div class="control">
-				<button type="button" class="button is-large is-primary"
-						v-on:click="chooseProjectDirectory">
+				<button v-if="!hasProject" v-on:click="chooseProjectDirectory"
+						type="button" class="button is-large is-primary">
 					選擇專案目錄
 				</button>
-			</div>
-		</div>
-	</form>
-
-	<form v-else v-on:submit.prevent="beginSession">
-
-		<div class="field is-horizontal">
-			<div class="field-label">
-				<label class="label" for="id_subject_name">受試代號</label>
-			</div>
-			<div class="field-body">
-				<div class="field">
-					<div class="control is-expanded">
-						<input class="input" type="text" id="id_subject_name"
-								v-model="subjectName">
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="field is-grouped">
-			<div class="control is-expanded">
-				<button type="submit"
-						v-bind:class="submitClass" v-bind:disabled="!subjectName">
-					開始作答
+				<button v-if="hasProject" v-bind:class="submitClass"  type="submit">
+					開始練習題
 				</button>
 			</div>
 		</div>
-
 	</form>
 
 </div>
@@ -54,7 +30,6 @@ export default {
 	data() {
 		return {
 			loading: false,
-			subjectName: '',
 		}
 	},
 	computed: {
@@ -77,15 +52,15 @@ export default {
 				this.$store.dispatch('PROJECT_LOAD_FROM_FILESYSTEM', projectData)
 			}
 		},
-		beginSession() {
+		beginExamples() {
 			this.loading = true
 			const data = {
-				subjectName: this.subjectName,
-				questions: _.shuffle(this.$store.state.project.questions),
+				subjectName: '',
+				questions: _.values(this.$store.state.project.examples),
 			}
 			this.$store.dispatch('SESSION_POPULATE', data).then(() => {
 				this.loading = false
-				this.$router.push({name: 'session-next-page'})
+				this.$router.push({'name': 'example-next-page'})
 			})
 		},
 	},
@@ -116,19 +91,6 @@ export default {
 			margin-top: 2rem;
 			margin-bottom: 2rem;
 			justify-content: center;
-
-			.is-expanded > .button {
-				width: 100%;
-			}
-		}
-
-		.field-label {
-			flex-grow: 0;
-			white-space: nowrap;
-
-			label {
-				line-height: 225%;
-			}
 		}
 	}
 }

@@ -33,7 +33,7 @@
 import {DateTime} from 'luxon'
 
 export default {
-	props: ['question'],
+	props: ['nextName', 'question'],
 	data() {
 		this.watchAudio()
 		return {
@@ -96,7 +96,7 @@ export default {
 				score: this.score,
 				diff: -this.beginTimes[index].diffNow(),
 			})
-			this.$router.push({name: 'session-next-page'})
+			this.$router.push({name: this.nextName})
 		},
 	},
 	beforeRouteLeave(to, from, next) {

@@ -5,6 +5,7 @@ import {Question} from '@/models'
 
 const state = {
 	source: null,
+	examples: {},
 	questions: {},
 }
 
@@ -15,9 +16,13 @@ const getters = {
 }
 
 const mutations = {
-	PROJECT_LOAD_FROM_FILESYSTEM(state, {source, questions}) {
+	PROJECT_LOAD_FROM_FILESYSTEM(state, {source, examples, questions}) {
 		state.source = source
+		state.examples = {}
 		state.questions = {}
+		for (const d of examples) {
+			state.examples[d.text] = new Question(d)
+		}
 		for (const d of _.shuffle(questions)) {
 			state.questions[d.text] = new Question(d)
 		}
