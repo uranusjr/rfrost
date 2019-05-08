@@ -54,7 +54,14 @@ function createProject(source) {
 			}
 		}
 
-		questions.push({text: tCell.v, audio: `${rootUrl}/${file}`})
+		const oCell = ws.getCell({r, c: 2})
+		const order = oCell ? Number(oCell.v) : 1
+
+		questions.push({
+			text: tCell.v,
+			audio: `${rootUrl}/${file}`,
+			order: order < 0 ? -1 : 1,
+		})
 	}
 
 	return {source, questions}

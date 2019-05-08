@@ -15,10 +15,10 @@
 		<h2 class="subtitle">{{ playing ? question.text : '' }}</h2>
 
 		<form v-if="!playing && beginTimes.length" v-on:submit.prevent="submit">
-			<button type="submit" v-on:click="score = 0">👎👎</button>
-			<button type="submit" v-on:click="score = 1">&nbsp;👎&nbsp;</button>
-			<button type="submit" v-on:click="score = 2">&nbsp;👍&nbsp;</button>
-			<button type="submit" v-on:click="score = 3">👍👍</button>
+			<button type="submit" v-on:click="setScore(0)">👎👎</button>
+			<button type="submit" v-on:click="setScore(1)">&nbsp;👎&nbsp;</button>
+			<button type="submit" v-on:click="setScore(2)">&nbsp;👍&nbsp;</button>
+			<button type="submit" v-on:click="setScore(3)">👍👍</button>
 		</form>
 
 	</div>
@@ -78,6 +78,13 @@ export default {
 			this.beginTimes.push(DateTime.local())
 			this.question.audio.currentTime = 0
 			this.question.audio.play().catch(() => {})
+		},
+		setScore(index) {
+			if (this.question.order < 0) {
+				this.score = 4 - index
+			} else {
+				this.score = index
+			}
 		},
 		submit() {
 			const index = this.beginTimes.length - 1
