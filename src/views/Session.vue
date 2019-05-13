@@ -38,7 +38,6 @@
 
 <script>
 
-import {ipcRenderer} from 'electron'
 import _ from 'lodash'
 
 export default {
