@@ -55,6 +55,8 @@
 
 <script>
 
+import _ from 'lodash'
+
 export default {
 	data() {
 		return {
@@ -73,11 +75,15 @@ export default {
 		},
 	},
 	methods: {
+		getIndex(answer) {
+			const qs = this.$store.state.project.questions
+			return _.findIndex(qs, (q) => q === answer.question)
+		}
 		saveResult() {
 			this.saving = true
 			const result = {
 				subject: this.$store.state.session.subjectName,
-				answers: this.$store.state.session.answers,
+				answers: _.sortBy(this.$store.state.session.answers, this.getIndex),
 			}
 			this.$store.dispatch('PROJECT_SAVE_RESULT', {result}).then(
 				() => {
