@@ -7,6 +7,7 @@ const state = {
 	source: null,
 	examples: {},
 	questions: {},
+	questionIndexes: {},
 }
 
 const getters = {
@@ -20,11 +21,13 @@ const mutations = {
 		state.source = source
 		state.examples = {}
 		state.questions = {}
+		state.questionIndexes = {}
 		for (const d of examples) {
 			state.examples[d.text] = new Question(d)
 		}
-		for (const d of _.shuffle(questions)) {
+		for (const [i, d] of questions.entries()) {
 			state.questions[d.text] = new Question(d)
+			state.questionIndexes[d.text] = i
 		}
 	},
 	PROJECT_SAVE_RESULT(state, {data, cb}) {

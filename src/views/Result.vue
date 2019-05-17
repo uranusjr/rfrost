@@ -75,16 +75,17 @@ export default {
 		},
 	},
 	methods: {
-		getIndex(answer) {
-			const qs = this.$store.state.project.questions
-			return _.findIndex(qs, (q) => q === answer.question)
-		},
 		saveResult() {
 			this.saving = true
+
+			const indexes = this.$store.state.project.questionIndexes
+			const answers = this.$store.state.session.answers
+
 			const result = {
 				subject: this.$store.state.session.subjectName,
-				answers: _.sortBy(this.$store.state.session.answers, this.getIndex),
+				answers: _.sortBy(answers, (a) => indexes[a.question.text]),
 			}
+
 			this.$store.dispatch('PROJECT_SAVE_RESULT', {result}).then(
 				() => {
 					this.saving = false
