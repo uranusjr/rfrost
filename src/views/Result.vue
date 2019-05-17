@@ -78,7 +78,7 @@ export default {
 		getIndex(answer) {
 			const qs = this.$store.state.project.questions
 			return _.findIndex(qs, (q) => q === answer.question)
-		}
+		},
 		saveResult() {
 			this.saving = true
 			const result = {
